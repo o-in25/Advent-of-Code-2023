@@ -3,9 +3,8 @@ import readline from 'readline';
 
 export default class Wreath {
 
-
-    constructor(dir) {
-        this.input = fs.createReadStream(`./../${dir}/input.txt`, 'utf-8');
+    constructor(dir, sample = false) {
+        this.input = fs.createReadStream(`./${dir}/${sample? 'sample' : 'input'}.txt`, 'utf-8');
         this.reader = readline.createInterface({ input: this.input });
     }
 
