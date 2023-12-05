@@ -55,7 +55,7 @@ const part1 = (fn) => {
                 })(row, start, end);
 
                 const lhs = boundryStart >= 0 && grid[row].charAt(boundryStart).match(/(?=[^.])([\D])/g);
-                const rhs = boundryEnd <= grid.length - 1 && grid[row].charAt(boundryEnd).match(/(?=[^.])([\D])/g);
+                const rhs = boundryEnd <= grid.length - 1 && grid[row].charAt(boundryEnd).match(/\b\d.*?\d\b/g);
 
                 if(bottomCheck || topCheck || lhs || rhs) {
                     sum += Number(partNumber);
@@ -77,57 +77,44 @@ const part2 = (fn) => {
     wreath.endOfFile(() => {
         let sum = 0;
         for(let row = 0; row < grid.length; row++) {
-            let parts = Array.from(grid[row].matchAll(/[*]*/g)).filter(([part]) => part !== '');
-            parts.forEach(part => {
-                const [partNumber] = part;
-                const start = part.index;
-                const end = start + partNumber.length - 1;
-                const boundryStart = start - 1;
-                const boundryEnd = end + 1;
+            let gears = Array.from(grid[row].matchAll(/[*]*/g)).filter(([part]) => part !== '');
+            gears.forEach(({ index }) => {
+                
 
-                const bottomCheck = ((row, start, end) => {
-                    if(row === grid.length - 1) return false;
-                    let bottomRow = grid[row + 1];
-                    let borderLeft = start - 1;
-                    let borderRight = end + 1;
-
-                    // check down
-                    while(start <= end) {
-                        if(bottomRow.charAt(start).match(/([\d]+)/g)) return true;
-                        start++;
+                const boundry = ((index, row, grid) => {
+                    let adjacent = [];
+                    
+                    // check left
+                    if(index > 0) {
+                        adjacent.push(grid[row].charAt(index - 1).matchAll(/([\d]+)/g));
                     }
 
-                    // check diagnoal 
-                    if(borderLeft >= 0 && bottomRow.charAt(borderLeft).match(/([\d]+)/g)) return true;
-                    if(borderRight <= grid.length - 1 && bottomRow.charAt(borderRight).match(/([\d]+)/g)) return true;
-                    return false;
-                })(row, start, end);
-                
-                
-                const topCheck = ((row, start, end) => {
-                    if(row === 0) return false;
-                    let topRow = grid[row - 1];
-                    let borderLeft = start - 1;
-                    let borderRight = end + 1;
-
-                    // check down
-                    while(start <= end) {
-                        if(topRow.charAt(start).match(/([\d]+)/g)) return true;
-                        start++;
+                    // check right
+                    if(index < grid[row].length - 1) {
+                        adjacent.push(grid[row].charAt(index + 1).matchAll(/([\d]+)/g));
                     }
 
-                    // check diagnoal 
-                    if(borderLeft >= 0 && topRow.charAt(borderLeft).match(/([\d]+)/g)) return true;
-                    if(borderRight <= grid.length - 1 && topRow.charAt(borderRight).match(/([\d]+)/g)) return true;
-                    return false;
-                })(row, start, end);
+                    // check top 
+                    if(row > 0) {
+                        adjacent.push(grid[row - 1].charAt(index).matchAll(/([\d]+)/g));
 
-                const lhs = boundryStart >= 0 && grid[row].charAt(boundryStart).match(/([\d]+)/g);
-                const rhs = boundryEnd <= grid.length - 1 && grid[row].charAt(boundryEnd).match(/([\d]+)/g);
+                    }
 
-                if(bottomCheck || topCheck || lhs || rhs) {
-                    sum += Number(partNumber);
-                }
+                    // check bottom
+                    if(row < grid.length - 1) {
+                        adjacent.push();
+                        const regex = /(?<=\D|^)\d+(?=\D|$)/g;
+
+                        let match;
+                        while ((match = regex.exec(grid[row + 1].charAt(index))) !== null) {
+                          console.log(`Match: ${match[0]}, Index: ${match.index}`);
+                        }
+                    }
+
+                    adjacent = adjacent.map(adj => Array.from(adj))
+
+                    console.log(adjacent)
+                })(index, row, grid);
             });
         }
 
