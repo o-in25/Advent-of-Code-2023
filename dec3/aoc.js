@@ -87,6 +87,8 @@ const part2 = (fn) => {
                     // check left
                     if(index > 0) {
                         adjacent.push(grid[row].charAt(index - 1).matchAll(/([\d]+)/g));
+
+
                     }
 
                     // check right
@@ -102,13 +104,21 @@ const part2 = (fn) => {
 
                     // check bottom
                     if(row < grid.length - 1) {
-                        adjacent.push();
-                        const regex = /(?<=\D|^)\d+(?=\D|$)/g;
+                        // * is at <index>
 
-                        let match;
-                        while ((match = regex.exec(grid[row + 1].charAt(index))) !== null) {
-                          console.log(`Match: ${match[0]}, Index: ${match.index}`);
-                        }
+
+                        // (<index> + <length>) - index < 2 && (<index> + <length>) - index < 2
+
+                        const test = Array.from(grid[row + 1].matchAll(/([\d]+)/g));
+                        console.log(test)
+                    //     adjacent.push();
+                    //     const regex = /(?<=\D|^)\d+(?=\D|$)/g;
+
+                    //     let match;
+                    //     while ((match = regex.exec(grid[row + 1].charAt(index))) !== null) {
+                    //       console.log(`Match: ${match[0]}, Index: ${match.index}`);
+                    //     }
+                    // }
                     }
 
                     adjacent = adjacent.map(adj => Array.from(adj))
